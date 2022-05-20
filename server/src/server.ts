@@ -9,12 +9,14 @@ config()
 
 import './infra/mongoose/connection' // eslint-disable-line
 import { router } from './infra/http/routes' // eslint-disable-line
+import { ErrorMiddleware } from './infra/http/middlewares/ErrorMiddleware' // eslint-disable-line
 
 const app = express()
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ limit: '10mb', extended: true }))
 app.use(cors())
 app.use(router)
+app.use(new ErrorMiddleware().handle)
 
 const serverHttp = http.createServer(app)
 
