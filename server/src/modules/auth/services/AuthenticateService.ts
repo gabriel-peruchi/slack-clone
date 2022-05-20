@@ -7,15 +7,6 @@ import { existsOrError } from '../../../core/utils/validations'
 import { User } from '../../accounts/domain/User'
 import { UsersRepository } from '../../accounts/repositories/UsersRepository'
 
-// type AuthPayload = {
-//   id: string
-//   name: string
-//   email: string
-//   iat: number
-//   exp: number
-//   sub: string
-// }
-
 type AuthenticateRequest = {
   email: string
   password: string
