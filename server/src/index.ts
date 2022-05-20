@@ -1,5 +1,5 @@
 import { serverHttp } from './server'
 
-serverHttp.listen(process.env.PORT || 8000, () =>
-  console.log('Server is running on port 8000')
-)
+const port = process.env.PORT || 3333
+
+serverHttp.listen(port, () => console.log(`Server is running on port ${port}`))
