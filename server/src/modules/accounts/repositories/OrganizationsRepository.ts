@@ -11,4 +11,9 @@ export class OrganizationsRepository {
     const organization = await OrganizationModel.create(data)
     return organization.toObject()
   }
+
+  async findById(id: string): Promise<Organization | undefined> {
+    const organization = await OrganizationModel.findById(id).exec()
+    return organization?.toObject()
+  }
 }
