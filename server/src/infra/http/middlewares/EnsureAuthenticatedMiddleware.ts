@@ -7,6 +7,7 @@ type AuthPayload = {
   id: string
   name: string
   email: string
+  super: boolean
 }
 
 export class EnsureAuthenticatedMiddleware {
@@ -23,6 +24,7 @@ export class EnsureAuthenticatedMiddleware {
       const authPayload = verify(token, auth.secretKey) as AuthPayload
 
       request.userId = authPayload.id
+      request.userSuper = authPayload.super
 
       return next()
     } catch (error) {
