@@ -18,10 +18,11 @@ type AuthenticateResponse = {
     id: string
     name: string
     email: string
+    super: boolean
   }
 }
 
-export class AuthenticateService {
+export class Authenticate {
   constructor(private usersRepository: UsersRepository) {}
 
   async execute({
@@ -45,7 +46,8 @@ export class AuthenticateService {
       {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        super: user.super || false
       },
       authConfig.secretKey,
       { subject: user.id }
@@ -56,7 +58,8 @@ export class AuthenticateService {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        super: user.super || false
       }
     }
 
