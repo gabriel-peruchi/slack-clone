@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { verify } from 'jsonwebtoken'
 
 import auth from '../../../config/auth'
+import { OrganizationsRepository } from './../../../modules/accounts/repositories/OrganizationsRepository'
 
 type AuthPayload = {
   id: string
@@ -11,10 +12,25 @@ type AuthPayload = {
 }
 
 export class EnsureAuthenticatedMiddleware {
-  handle(request: Request, response: Response, next: NextFunction) {
+  constructor(private organizationsRepository: OrganizationsRepository) {}
+
+  async handle(request: Request, response: Response, next: NextFunction) {
     const bearerToken = request.headers.authorization
+    const organizationId = request.headers.organization as string
 
     if (!bearerToken) {
+      return response.status(401).json({ error: 'Não autorizado.' })
+    }
+
+    if (!organizationId) {
+      return response.status(401).json({ error: 'Não autorizado.' })
+    }
+
+    const organization = await this.organizationsRepository.findById(
+      organizationId
+    )
+
+    if (!organization) {
       return response.status(401).json({ error: 'Não autorizado.' })
     }
 
@@ -25,6 +41,7 @@ export class EnsureAuthenticatedMiddleware {
 
       request.userId = authPayload.id
       request.userSuper = authPayload.super
+      request.organizationId = organizationId
 
       return next()
     } catch (error) {
