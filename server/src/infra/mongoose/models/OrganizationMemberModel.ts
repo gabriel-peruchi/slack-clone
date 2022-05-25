@@ -27,6 +27,13 @@ const OrganizationMemberSchema = new Schema<OrganizationMember>(
   { timestamps: true }
 )
 
+OrganizationMemberSchema.virtual('user', {
+  ref: 'User',
+  localField: 'userId',
+  foreignField: '_id',
+  justOne: true
+})
+
 const OrganizationMemberModel = model<OrganizationMember>(
   'OrganizationMember',
   OrganizationMemberSchema,

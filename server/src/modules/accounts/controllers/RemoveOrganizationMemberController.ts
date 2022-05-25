@@ -8,7 +8,7 @@ export class RemoveOrganizationMemberController {
   async handle(request: Request, response: Response) {
     await this.removeOrganizationMember.execute({
       memberId: request.params.memberId,
-      organizationId: request.params.organizationId
+      organizationId: request.organizationId
     })
     return response.end()
   }

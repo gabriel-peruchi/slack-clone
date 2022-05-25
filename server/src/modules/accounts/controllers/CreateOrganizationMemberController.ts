@@ -8,7 +8,7 @@ export class CreateOrganizationMemberController {
   async handle(request: Request, response: Response) {
     const organizationMemberRes = await this.createOrganizationMember.execute({
       ...request.body,
-      organizationId: request.params.organizationId
+      organizationId: request.organizationId
     })
     return response.json(organizationMemberRes)
   }
