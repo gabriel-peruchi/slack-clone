@@ -33,4 +33,14 @@ export class OrganizationMembersRepository {
     })
     return organizationMember?.toObject()
   }
+
+  async deleteByUserAndOrganization({
+    userId,
+    organizationId
+  }: FindByUserAndOrganizationParams): Promise<void> {
+    await OrganizationMemberModel.deleteOne({
+      userId,
+      organizationId
+    })
+  }
 }
