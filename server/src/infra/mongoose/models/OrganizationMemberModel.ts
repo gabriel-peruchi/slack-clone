@@ -34,6 +34,13 @@ OrganizationMemberSchema.virtual('user', {
   justOne: true
 })
 
+OrganizationMemberSchema.virtual('organization', {
+  ref: 'Organization',
+  localField: 'organizationId',
+  foreignField: '_id',
+  justOne: true
+})
+
 const OrganizationMemberModel = model<OrganizationMember>(
   'OrganizationMember',
   OrganizationMemberSchema,

@@ -23,6 +23,10 @@ type OrganizationMemberWithDetails = {
     name: string
     email: string
   }
+  organization: {
+    id: string
+    name: string
+  }
 }
 
 export class OrganizationMembersRepository {
@@ -50,7 +54,7 @@ export class OrganizationMembersRepository {
     const organizationMembers = await OrganizationMemberModel.find({
       organizationId
     })
-      .populate('user')
+      .populate('user organization')
       .exec()
 
     return organizationMembers
@@ -62,6 +66,34 @@ export class OrganizationMembersRepository {
           id: doc.user.id,
           name: doc.user.name,
           email: doc.user.email
+        },
+        organization: {
+          id: doc.organization.id,
+          name: doc.organization.name
+        }
+      }))
+  }
+
+  async findManyByUser(
+    userId: string
+  ): Promise<OrganizationMemberWithDetails[]> {
+    const organizationMembers = await OrganizationMemberModel.find({ userId })
+      .populate('user organization')
+      .exec()
+
+    return organizationMembers
+      .map((doc) => doc.toObject())
+      .map((doc: any) => ({
+        id: doc.id,
+        permission: doc.permission,
+        user: {
+          id: doc.user.id,
+          name: doc.user.name,
+          email: doc.user.email
+        },
+        organization: {
+          id: doc.organization.id,
+          name: doc.organization.name
         }
       }))
   }
