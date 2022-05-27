@@ -11,10 +11,19 @@ type AuthPayload = {
   super: boolean
 }
 
+type AuthOptions = {
+  skipOrganization?: boolean
+}
+
 export class EnsureAuthenticatedMiddleware {
   constructor(private organizationsRepository: OrganizationsRepository) {}
 
-  async handle(request: Request, response: Response, next: NextFunction) {
+  async handle(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+    options?: AuthOptions
+  ) {
     const bearerToken = request.headers.authorization
     const organizationId = request.headers.organization as string
 
@@ -22,16 +31,18 @@ export class EnsureAuthenticatedMiddleware {
       return response.status(401).json({ error: 'Não autorizado.' })
     }
 
-    if (!organizationId) {
-      return response.status(401).json({ error: 'Não autorizado.' })
-    }
+    if (!options?.skipOrganization) {
+      if (!organizationId) {
+        return response.status(401).json({ error: 'Não autorizado.' })
+      }
 
-    const organization = await this.organizationsRepository.findById(
-      organizationId
-    )
+      const organization = await this.organizationsRepository.findById(
+        organizationId
+      )
 
-    if (!organization) {
-      return response.status(401).json({ error: 'Não autorizado.' })
+      if (!organization) {
+        return response.status(401).json({ error: 'Não autorizado.' })
+      }
     }
 
     const token = bearerToken.split(' ')[1]
