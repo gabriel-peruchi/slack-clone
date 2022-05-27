@@ -24,6 +24,10 @@ export class OrganizationsRepository {
     return organization?.toObject()
   }
 
+  async updateById(id: string, data: Partial<Organization>): Promise<void> {
+    await OrganizationModel.updateOne({ _id: id }, data).exec()
+  }
+
   async search({
     rpp,
     page,

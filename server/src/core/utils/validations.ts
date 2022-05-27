@@ -1,7 +1,7 @@
 import { AppError } from '../errors/AppError'
 
 export function existsOrError(value: any, msgError: string) {
-  if (!value) {
+  if (value === undefined || value === null) {
     throw new AppError(msgError)
   }
 

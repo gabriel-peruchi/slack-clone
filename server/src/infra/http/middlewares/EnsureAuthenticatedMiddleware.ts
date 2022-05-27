@@ -43,6 +43,10 @@ export class EnsureAuthenticatedMiddleware {
       if (!organization) {
         return response.status(401).json({ error: 'Não autorizado.' })
       }
+
+      if (!organization.active) {
+        return response.status(401).json({ error: 'Não autorizado.' })
+      }
     }
 
     const token = bearerToken.split(' ')[1]

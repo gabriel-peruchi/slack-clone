@@ -16,9 +16,9 @@ export class ListUserOrganizations {
     const organizationMembers =
       await this.organizationMembersRepository.findManyByUser(userId)
 
-    const organizations = organizationMembers.map(
-      ({ organization }) => organization
-    )
+    const organizations = organizationMembers
+      .filter(({ organization }) => organization.active)
+      .map(({ organization }) => organization)
 
     return organizations
   }

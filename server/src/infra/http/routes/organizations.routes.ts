@@ -5,6 +5,7 @@ import { makeCreateOrganizationMemberController } from '../factories/controllers
 import { makeListOrganizationMembersController } from '../factories/controllers/ListOrganizationMembersControllerFactory'
 import { makeListOrganizationsController } from '../factories/controllers/ListOrganizationsControllerFactory'
 import { makeRemoveOrganizationMemberController } from '../factories/controllers/RemoveOrganizationMemberControllerFactory'
+import { makeUpdateOrganizationStatusController } from '../factories/controllers/UpdateOrganizationStatusControllerFactory'
 import { makeEnsureAuthenticatedMiddleware } from '../factories/middlewares/EnsureAuthenticatedMiddlewareFactory'
 import { makeEnsureOrganizationAdminMiddleware } from '../factories/middlewares/EnsureOrganizationAdminMiddlewareFactory'
 import { makeEnsureSuperUserMiddleware } from '../factories/middlewares/EnsureSuperUserMiddlewareFactory'
@@ -21,6 +22,8 @@ const removeOrganizationMemberController =
 const listOrganizationMembersController =
   makeListOrganizationMembersController()
 const listOrganizationsController = makeListOrganizationsController()
+const updateOrganizationStatusController =
+  makeUpdateOrganizationStatusController()
 
 const organizationsRouter = Router()
 
@@ -40,9 +43,19 @@ organizationsRouter.post(
   createOrganizationController.handle.bind(createOrganizationController)
 )
 
+organizationsRouter.patch(
+  '/:organizationId/status',
+  (...req) =>
+    ensureAuthenticatedMiddleware.handle(...req, { skipOrganization: true }),
+  ensureSuperUserMiddleware.handle.bind(ensureSuperUserMiddleware),
+  updateOrganizationStatusController.handle.bind(
+    updateOrganizationStatusController
+  )
+)
+
 organizationsRouter.get(
   '/members',
-  ensureAuthenticatedMiddleware.handle.bind(ensureAuthenticatedMiddleware),
+  (...req) => ensureAuthenticatedMiddleware.handle(...req),
   ensureOrganizationAdminMiddleware.handle.bind(
     ensureOrganizationAdminMiddleware
   ),
@@ -53,7 +66,7 @@ organizationsRouter.get(
 
 organizationsRouter.post(
   '/members',
-  ensureAuthenticatedMiddleware.handle.bind(ensureAuthenticatedMiddleware),
+  (...req) => ensureAuthenticatedMiddleware.handle(...req),
   ensureOrganizationAdminMiddleware.handle.bind(
     ensureOrganizationAdminMiddleware
   ),
@@ -64,7 +77,7 @@ organizationsRouter.post(
 
 organizationsRouter.delete(
   '/members/:memberId',
-  ensureAuthenticatedMiddleware.handle.bind(ensureAuthenticatedMiddleware),
+  (...req) => ensureAuthenticatedMiddleware.handle(...req),
   ensureOrganizationAdminMiddleware.handle.bind(
     ensureOrganizationAdminMiddleware
   ),

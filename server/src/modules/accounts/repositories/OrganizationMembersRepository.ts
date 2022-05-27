@@ -26,6 +26,7 @@ type OrganizationMemberWithDetails = {
   organization: {
     id: string
     name: string
+    active: boolean
   }
 }
 
@@ -69,7 +70,8 @@ export class OrganizationMembersRepository {
         },
         organization: {
           id: doc.organization.id,
-          name: doc.organization.name
+          name: doc.organization.name,
+          active: doc.organization.active
         }
       }))
   }
@@ -93,7 +95,8 @@ export class OrganizationMembersRepository {
         },
         organization: {
           id: doc.organization.id,
-          name: doc.organization.name
+          name: doc.organization.name,
+          active: doc.organization.active
         }
       }))
   }

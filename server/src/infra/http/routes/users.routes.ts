@@ -8,12 +8,10 @@ const listUserOrganizationsController = makeListUserOrganizationsController()
 
 const userRouter = Router()
 
-userRouter.use(
-  ensureAuthenticatedMiddleware.handle.bind(ensureAuthenticatedMiddleware)
-)
-
 userRouter.get(
   '/organizations',
+  (...req) =>
+    ensureAuthenticatedMiddleware.handle(...req, { skipOrganization: true }),
   listUserOrganizationsController.handle.bind(listUserOrganizationsController)
 )
 
