@@ -1,6 +1,5 @@
-import bcrypt from 'bcryptjs'
-
 import { existsOrError } from '../../../core/utils/validations'
+import { encryptPassword } from '../domain/User'
 import { OrganizationMembersRepository } from '../repositories/OrganizationMembersRepository'
 import { UsersRepository } from '../repositories/UsersRepository'
 import { OrganizationMemberPermissionEnum } from './../domain/OrganizationMember'
@@ -57,7 +56,7 @@ export class CreateOrganizationMember {
     }
 
     email = email.toLowerCase()
-    const passwordHash = await bcrypt.hash('123456', 8)
+    const passwordHash = await encryptPassword('123456')
 
     const userCreated = await this.usersRepository.create({
       name,

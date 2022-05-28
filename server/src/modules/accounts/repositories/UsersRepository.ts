@@ -19,4 +19,15 @@ export class UsersRepository {
       .exec()
     return userDoc?.toObject()
   }
+
+  async findByTokenResetPassword(token: string): Promise<User | undefined> {
+    const userDoc = await UserModel.findOne({
+      resetPasswordToken: token
+    }).exec()
+    return userDoc?.toObject()
+  }
+
+  async updateById(id: string, data: Partial<User>): Promise<void> {
+    await UserModel.updateOne({ _id: id }, data).exec()
+  }
 }
