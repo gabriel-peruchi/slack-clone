@@ -13,6 +13,11 @@ export class UsersRepository {
     return userDoc?.toObject()
   }
 
+  async findById(id: string): Promise<User | undefined> {
+    const userDoc = await UserModel.findOne({ _id: id }).exec()
+    return userDoc?.toObject()
+  }
+
   async findByEmail(email: string): Promise<User | undefined> {
     const userDoc = await UserModel.findOne({ email })
       .select('id name email password super')

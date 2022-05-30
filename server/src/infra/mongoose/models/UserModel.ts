@@ -1,6 +1,7 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Types } from 'mongoose'
 
 import { User } from '../../../modules/accounts/domain/User'
+import { FileModel } from './FileModel'
 
 const UserSchema = new Schema<User>(
   {
@@ -23,15 +24,29 @@ const UserSchema = new Schema<User>(
       type: Boolean,
       default: false
     },
+    avatarId: {
+      type: Types.ObjectId as any,
+      ref: FileModel,
+      default: null
+    },
     resetPasswordToken: {
-      type: String
+      type: String,
+      default: null
     },
     resetPasswordExpires: {
-      type: Date
+      type: Date,
+      defaul: null
     }
   },
   { timestamps: true }
 )
+
+UserSchema.virtual('avatar', {
+  ref: 'File',
+  localField: 'avatarId',
+  foreignField: '_id',
+  justOne: true
+})
 
 const UserModel = model<User>('User', UserSchema, 'users')
 
