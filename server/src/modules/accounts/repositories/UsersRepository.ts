@@ -7,6 +7,16 @@ type UserCreateData = {
   password: string
 }
 
+type UserWithDetails = {
+  id: string
+  name: string
+  email: string
+  avatar?: {
+    id: string
+    url: string
+  }
+}
+
 export class UsersRepository {
   async create(data: UserCreateData): Promise<User> {
     const userDoc = await UserModel.create(data)
@@ -16,6 +26,30 @@ export class UsersRepository {
   async findById(id: string): Promise<User | undefined> {
     const userDoc = await UserModel.findOne({ _id: id }).exec()
     return userDoc?.toObject()
+  }
+
+  async findByIdWithDetails(id: string): Promise<UserWithDetails | undefined> {
+    const userDoc = await UserModel.findOne({ _id: id })
+      .populate('avatar')
+      .exec()
+
+    if (!userDoc) {
+      return
+    }
+
+    const userObject: any = userDoc.toObject()
+
+    return {
+      id: userObject.id,
+      name: userObject.name,
+      email: userObject.email,
+      avatar: userObject.avatar
+        ? {
+            id: userObject.avatar.id,
+            url: userObject.avatar.url
+          }
+        : undefined
+    }
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
