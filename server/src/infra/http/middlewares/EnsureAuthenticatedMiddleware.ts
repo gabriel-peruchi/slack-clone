@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { verify } from 'jsonwebtoken'
 
 import auth from '../../../config/auth'
+import { OrganizationMembersRepository } from './../../../modules/accounts/repositories/OrganizationMembersRepository'
 import { OrganizationsRepository } from './../../../modules/accounts/repositories/OrganizationsRepository'
 
 type AuthPayload = {
@@ -16,7 +17,10 @@ type AuthOptions = {
 }
 
 export class EnsureAuthenticatedMiddleware {
-  constructor(private organizationsRepository: OrganizationsRepository) {}
+  constructor(
+    private organizationsRepository: OrganizationsRepository,
+    private organizationMembersRepository: OrganizationMembersRepository
+  ) {}
 
   async handle(
     request: Request,
@@ -31,24 +35,6 @@ export class EnsureAuthenticatedMiddleware {
       return response.status(401).json({ error: 'Não autorizado.' })
     }
 
-    if (!options?.skipOrganization) {
-      if (!organizationId) {
-        return response.status(401).json({ error: 'Não autorizado.' })
-      }
-
-      const organization = await this.organizationsRepository.findById(
-        organizationId
-      )
-
-      if (!organization) {
-        return response.status(401).json({ error: 'Não autorizado.' })
-      }
-
-      if (!organization.active) {
-        return response.status(401).json({ error: 'Não autorizado.' })
-      }
-    }
-
     const token = bearerToken.split(' ')[1]
 
     try {
@@ -57,10 +43,40 @@ export class EnsureAuthenticatedMiddleware {
       request.userId = authPayload.id
       request.userSuper = authPayload.super
       request.organizationId = organizationId
-
-      return next()
     } catch (error) {
       return response.status(401).json({ error: 'Não autorizado.' })
     }
+
+    if (options?.skipOrganization) {
+      return next()
+    }
+
+    if (!organizationId) {
+      return response.status(401).json({ error: 'Não autorizado.' })
+    }
+
+    const organization = await this.organizationsRepository.findById(
+      organizationId
+    )
+
+    if (!organization) {
+      return response.status(401).json({ error: 'Não autorizado.' })
+    }
+
+    if (!organization.active) {
+      return response.status(401).json({ error: 'Não autorizado.' })
+    }
+
+    const organizationMember =
+      await this.organizationMembersRepository.findByUserAndOrganization({
+        userId: request.userId,
+        organizationId
+      })
+
+    if (!organizationMember) {
+      return response.status(401).json({ error: 'Não autorizado.' })
+    }
+
+    return next()
   }
 }
