@@ -19,4 +19,11 @@ export class ConversationsRepository {
     const conversationDoc = await ConversationModel.findOne({ _id: id }).exec()
     return conversationDoc?.toObject()
   }
+
+  async getAllByOrganization(organizationId: string): Promise<Conversation[]> {
+    const conversationsDocs = await ConversationModel.find({
+      organizationId
+    }).exec()
+    return conversationsDocs.map((doc) => doc.toObject())
+  }
 }
