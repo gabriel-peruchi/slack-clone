@@ -18,6 +18,10 @@ const ConversationSchema = new Schema<Conversation>(
       type: Boolean,
       default: false
     },
+    deleted: {
+      type: Boolean,
+      default: false
+    },
     ownerId: {
       type: Types.ObjectId as any,
       ref: UserModel,
@@ -31,6 +35,13 @@ const ConversationSchema = new Schema<Conversation>(
   },
   { timestamps: true }
 )
+
+ConversationSchema.pre('find', function () {
+  this.setQuery({
+    ...this.getQuery(),
+    deleted: { $ne: true }
+  })
+})
 
 const ConversationModel = model<Conversation>(
   'Conversation',

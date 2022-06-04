@@ -26,4 +26,8 @@ export class ConversationsRepository {
     }).exec()
     return conversationsDocs.map((doc) => doc.toObject())
   }
+
+  async updateById(id: string, data: Partial<Conversation>): Promise<void> {
+    await ConversationModel.updateOne({ _id: id }, data).exec()
+  }
 }

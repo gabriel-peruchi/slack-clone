@@ -5,6 +5,7 @@ export type Conversation = {
   onlyAdmin: boolean
   ownerId: string
   organizationId: string
+  deleted?: boolean
   createdAt?: Date
   updatedAt?: Date
 }
