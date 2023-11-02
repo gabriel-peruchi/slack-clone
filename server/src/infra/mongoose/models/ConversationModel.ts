@@ -36,10 +36,13 @@ const ConversationSchema = new Schema<Conversation>(
   { timestamps: true }
 )
 
-ConversationSchema.pre('find', function () {
-  this.setQuery({
-    ...this.getQuery(),
-    deleted: { $ne: true }
+const queryOptions = ['find', 'findOne']
+queryOptions.forEach((query) => {
+  ConversationSchema.pre(query, function () {
+    this.setQuery({
+      ...this.getQuery(),
+      deleted: { $ne: true }
+    })
   })
 })
 
